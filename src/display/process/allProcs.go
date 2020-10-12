@@ -22,8 +22,6 @@ import (
 	"log"
 	"strconv"
 	"strings"
-	"sync"
-	"time"
 
 	ui "github.com/gizak/termui/v3"
 	h "github.com/pesos/grofer/src/display/misc"
@@ -118,7 +116,6 @@ func AllProcVisuals(dataChannel chan []*proc.Process,
 
 	defer ui.Close()
 
-	var on sync.Once
 	var help *h.HelpMenu = h.NewHelpMenu()
 	h.SelectHelpMenu("proc")
 
@@ -143,7 +140,6 @@ func AllProcVisuals(dataChannel chan []*proc.Process,
 	}
 
 	uiEvents := ui.PollEvents()
-	tick := time.Tick(time.Duration(refreshRate) * time.Millisecond)
 
 	previousKey := ""
 	selectedStyle := ui.NewStyle(ui.ColorYellow, ui.ColorClear, ui.ModifierBold)
@@ -284,23 +280,7 @@ func AllProcVisuals(dataChannel chan []*proc.Process,
 				myPage.BodyList.SelectedRowStyle = selectedStyle
 				myPage.BodyList.Rows = getData(data)
 
-				on.Do(updateUI)
-			}
-
-		case <-tick: // Update page with new values
-			if killSelected {
-				exists, _ := proc.PidExists(pidToKill)
-				if !exists {
-					runAllProc = true
-					killSelected = false
-					myPage.BodyList.SelectedRowStyle = selectedStyle
-					updateProcs()
-				}
-			} else {
-				myPage.BodyList.SelectedRowStyle = selectedStyle
-			}
-			if !helpVisible {
-				ui.Render(myPage.Grid)
+				updateUI()
 			}
 		}
 	}

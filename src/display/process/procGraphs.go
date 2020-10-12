@@ -20,7 +20,6 @@ import (
 	"log"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	ui "github.com/gizak/termui/v3"
@@ -63,7 +62,6 @@ func ProcVisuals(ctx context.Context,
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
 
-	var on sync.Once
 	var help *h.HelpMenu = h.NewHelpMenu()
 	h.SelectHelpMenu("proc_pid")
 
@@ -110,7 +108,6 @@ func ProcVisuals(ctx context.Context,
 	}
 
 	uiEvents := ui.PollEvents()
-	tick := time.Tick(time.Duration(refreshRate) * time.Millisecond)
 
 	previousKey := ""
 	selectedStyle := ui.NewStyle(ui.ColorYellow, ui.ColorClear, ui.ModifierBold)
@@ -222,12 +219,7 @@ func ProcVisuals(ctx context.Context,
 				myPage.PageFaultsChart.Title = " Page Faults" + units
 				myPage.ChildProcsList.Rows = getChildProcs(data)
 
-				on.Do(updateUI)
-			}
-
-		case <-tick:
-			if !helpVisible {
-				ui.Render(myPage.Grid)
+				updateUI()
 			}
 		}
 	}

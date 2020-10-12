@@ -45,7 +45,6 @@ func RenderCharts(ctx context.Context,
 	}
 	defer ui.Close()
 
-	var on sync.Once
 	var totalBytesRecv float64
 	var totalBytesSent float64
 	var help *h.HelpMenu = h.NewHelpMenu()
@@ -105,7 +104,6 @@ func RenderCharts(ctx context.Context,
 	updateUI() // Initialize empty UI
 
 	uiEvents := ui.PollEvents()
-	tick := time.Tick(time.Duration(refreshRate) * time.Millisecond)
 	for {
 		select {
 		case <-ctx.Done():
@@ -212,15 +210,7 @@ func RenderCharts(ctx context.Context,
 
 				}
 
-				on.Do(updateUI)
-			}
-
-		case <-tick: // Update page with new values
-			if !helpVisible {
-				ui.Render(myPage.Grid)
-				for i := 0; i < numCores; i++ {
-					ui.Render(myPage.CPUCharts[i])
-				}
+				updateUI()
 			}
 		}
 	}
