@@ -53,8 +53,7 @@ func getChildProcs(proc *process.Process) []string {
 
 // ProcVisuals renders graphs and charts for per-process stats.
 func ProcVisuals(ctx context.Context,
-	dataChannel chan *process.Process,
-	refreshRate uint64) error {
+	dataChannel chan *process.Process) error {
 
 	defer ui.Close()
 

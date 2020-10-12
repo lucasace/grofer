@@ -21,8 +21,6 @@ import (
 	"fmt"
 	"runtime"
 	"strconv"
-	"sync"
-	"time"
 
 	ui "github.com/gizak/termui/v3"
 	h "github.com/pesos/grofer/src/display/misc"
@@ -37,8 +35,7 @@ var helpVisible = false
 
 // RenderCharts handles plotting graphs and charts for system stats in general.
 func RenderCharts(ctx context.Context,
-	dataChannel chan utils.DataStats,
-	refreshRate uint64) error {
+	dataChannel chan utils.DataStats) error {
 
 	if err := ui.Init(); err != nil {
 		return fmt.Errorf("failed to initialize termui: %v", err)
@@ -217,10 +214,8 @@ func RenderCharts(ctx context.Context,
 }
 
 func RenderCPUinfo(ctx context.Context,
-	dataChannel chan *info.CPULoad,
-	refreshRate uint64) error {
+	dataChannel chan *info.CPULoad) error {
 
-	var on sync.Once
 	var help *h.HelpMenu = h.NewHelpMenu()
 	h.SelectHelpMenu("main")
 
@@ -252,7 +247,6 @@ func RenderCPUinfo(ctx context.Context,
 	updateUI()
 
 	uiEvents := ui.PollEvents()
-	tick := time.Tick(time.Duration(refreshRate) * time.Millisecond)
 	for {
 		select {
 		case <-ctx.Done():
@@ -304,17 +298,12 @@ func RenderCPUinfo(ctx context.Context,
 
 				myPage.CPUChart.Rows = data.CPURates
 
-				on.Do(func() {
+				func() {
 					w, h := ui.TerminalDimensions()
 					ui.Clear()
 					myPage.Grid.SetRect(0, 0, w, h)
 					ui.Render(myPage.Grid)
-				})
-			}
-
-		case <-tick:
-			if !helpVisible {
-				ui.Render(myPage.Grid)
+				}()
 			}
 		}
 	}

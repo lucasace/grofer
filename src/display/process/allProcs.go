@@ -107,8 +107,7 @@ func getData(procs []*proc.Process) []string {
 }
 
 func AllProcVisuals(dataChannel chan []*proc.Process,
-	ctx context.Context,
-	refreshRate uint64) error {
+	ctx context.Context) error {
 
 	if err := ui.Init(); err != nil {
 		log.Fatalf("failed to initialize termui: %v", err)

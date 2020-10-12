@@ -61,11 +61,11 @@ While using a TUI based command, press ? to get information about key bindings (
 			eg, ctx := errgroup.WithContext(context.Background())
 
 			eg.Go(func() error {
-				return info.GetCPULoad(ctx, cpuLoad, dataChannel, uint64(4*overallRefreshRate/5))
+				return info.GetCPULoad(ctx, cpuLoad, dataChannel, overallRefreshRate)
 			})
 
 			eg.Go(func() error {
-				return overallGraph.RenderCPUinfo(ctx, dataChannel, overallRefreshRate)
+				return overallGraph.RenderCPUinfo(ctx, dataChannel)
 			})
 
 			if err := eg.Wait(); err != nil {
@@ -80,10 +80,10 @@ While using a TUI based command, press ? to get information about key bindings (
 			eg, ctx := errgroup.WithContext(context.Background())
 
 			eg.Go(func() error {
-				return general.GlobalStats(ctx, dataChannel, uint64(4*overallRefreshRate/5))
+				return general.GlobalStats(ctx, dataChannel, overallRefreshRate)
 			})
 			eg.Go(func() error {
-				return overallGraph.RenderCharts(ctx, dataChannel, overallRefreshRate)
+				return overallGraph.RenderCharts(ctx, dataChannel)
 			})
 
 			if err := eg.Wait(); err != nil {

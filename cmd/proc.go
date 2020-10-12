@@ -72,10 +72,10 @@ Syntax:
 			}
 
 			eg.Go(func() error {
-				return process.Serve(proc, dataChannel, ctx, int64(4*procRefreshRate/5))
+				return process.Serve(proc, dataChannel, ctx, int64(procRefreshRate))
 			})
 			eg.Go(func() error {
-				return procGraph.ProcVisuals(ctx, dataChannel, procRefreshRate)
+				return procGraph.ProcVisuals(ctx, dataChannel)
 			})
 
 			if err := eg.Wait(); err != nil {
@@ -89,10 +89,10 @@ Syntax:
 			eg, ctx := errgroup.WithContext(context.Background())
 
 			eg.Go(func() error {
-				return process.ServeProcs(dataChannel, ctx, int64(4*procRefreshRate/5))
+				return process.ServeProcs(dataChannel, ctx, int64(procRefreshRate))
 			})
 			eg.Go(func() error {
-				return procGraph.AllProcVisuals(dataChannel, ctx, procRefreshRate)
+				return procGraph.AllProcVisuals(dataChannel, ctx)
 			})
 
 			if err := eg.Wait(); err != nil {
